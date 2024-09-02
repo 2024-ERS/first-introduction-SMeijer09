@@ -28,7 +28,7 @@ Working with Quarto has a range of benefits:
 -   rendered output can be in all kinds of formats, like docx, pdf,
     html + it integrates very well with generating content for the
     internet
--   a quarto document is easy to ready even for a normal person 😊
+-   a quarto document is easy to read even for a normal person 😊
 
 ### 2. Markdown, R Markdown and Quarto
 
@@ -174,22 +174,3 @@ deviation, $\operatorname{erf}(z)$ is the error function defined by:
 $$
 \operatorname{erf}(z) = \frac{2}{\sqrt{\pi}} \int_0^z e^{-t^2} \, dt
 $$
-
-# Test
-
-## Test1
-
-### Test2
-
-```{r}
-A <- c(1,2,3,4)
-B <- c(5,6,7,8)
-df <- data.frame(A,B)
-plot(df)
-```
-
-$$ a^2+b^2=c^2$$
-
--   Point 1
--   Point 2
--   Point 3
