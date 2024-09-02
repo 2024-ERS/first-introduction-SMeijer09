@@ -81,6 +81,20 @@ indicating in which language it is written, then some execution options
 starting with #\| and then the script itself. This code chunk can be run
 as a block of code by using the small green arrow at the top right.
 
+Make a simple code block
+```{r}
+print("hello world")
+# define a variable A and assign the value 5 to it
+A <- 5
+# same for a variable B with value 10
+B <- 10
+# calculate the sum of A and B and call it C
+C <- A+B
+#print the results
+print(C)
+```
+
+
 ```{r, message = FALSE, warning = FALSE}
 #| label: fig-histogram
 #| fig-cap: Histogram of 100 random values from a normal distribution with 0 mean and 1 standard deviation
@@ -94,7 +108,7 @@ randomvalue <- rnorm(n = 100, mean = 0, sd = 1)
 data1<-data.frame(randomvalue)
 # plot as a histogram
 ggplot2::ggplot(data=data1, 
-                mapping=aes(x=randomvalue)) +
+                mapping=aes(x=randomvalue)) + 
   geom_histogram()
 
 ```
