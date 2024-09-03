@@ -6,6 +6,8 @@ format: html
 editor: 
   markdown: 
     wrap: 72
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Working with Quarto documents in R
@@ -82,6 +84,7 @@ starting with #\| and then the script itself. This code chunk can be run
 as a block of code by using the small green arrow at the top right.
 
 Make a simple code block
+
 ```{r}
 print("hello world")
 # define a variable A and assign the value 5 to it
@@ -92,8 +95,13 @@ B <- 10
 C <- A+B
 #print the results
 print(C)
+# calculate the mean of the numbers 2,8,12,5,3
+my_numbers <- c(2,8,12,5,3)
+?mean # check package 
+base::mean(my_numbers) # use function mean from package base
 ```
 
+Then make a plot
 
 ```{r, message = FALSE, warning = FALSE}
 #| label: fig-histogram
@@ -106,6 +114,7 @@ set.seed(123)
 randomvalue <- rnorm(n = 100, mean = 0, sd = 1)
 # convert to a dataframe
 data1<-data.frame(randomvalue)
+print(data1)
 # plot as a histogram
 ggplot2::ggplot(data=data1, 
                 mapping=aes(x=randomvalue)) + 
@@ -188,3 +197,9 @@ deviation, $\operatorname{erf}(z)$ is the error function defined by:
 $$
 \operatorname{erf}(z) = \frac{2}{\sqrt{\pi}} \int_0^z e^{-t^2} \, dt
 $$
+
+```{r}
+library(readxl)
+data1 <- read_xlsx()
+```
+
