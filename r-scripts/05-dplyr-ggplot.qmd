@@ -99,6 +99,12 @@ Make same plot but showing a separate regression line per year
 Make a panel plot where with each year is shown as a separate graph
 
 ```{r}
+drop_na(FactCockleSize) |>
+ggplot2::ggplot(mapping=aes(y=thickness_mm,x=length_mm))+
+  geom_point(mapping=aes(color=year))+
+  geom_smooth(method="lm",color="yellow") +
+  facet_wrap(~year)
+
 ```
 
 We conclude from this that: \* there were two important outliers in the
