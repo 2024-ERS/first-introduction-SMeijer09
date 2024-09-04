@@ -58,10 +58,13 @@ add a regression line through all the years
 #delete big outlier
 FactCockleSize |> dplyr::filter(thickness_mm<500)
 
-FactCockleSize <- readr::read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSpormjGiM4uWMTIZYm9Upt5j1Ige_Wu9CrhGGdvjXwxmHP2R6S7JDyEmiGTn3fXihl5s5yBn_sdo8h/pub?gid=1538766002&single=true&output=csv") |> dplyr::filter(CockleObs_ID!=1531, CockleObs_ID!=469)
+FactCockleSize <- readr::read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSpormjGiM4uWMTIZYm9Upt5j1Ige_Wu9CrhGGdvjXwxmHP2R6S7JDyEmiGTn3fXihl5s5yBn_sdo8h/pub?gid=1538766002&single=true&output=csv") |> dplyr::filter(CockleObs_ID!=1531, CockleObs_ID!=469) |> dplyr::mutate(year=factor(year))
 
 ggplot2::ggplot(data=FactCockleSize,
-                mapping=aes(x=thickness_mm,y=length_mm,fill=year))+geom_point()+geom_abline() 
+                mapping=aes(x=thickness_mm,y=length_mm,color=year))+
+  geom_point()+
+  geom_smooth(method="lm") + 
+  theme_light()
 #find the other outlier
 FactCockleSize |> dplyr::filter(thickness_mm>10 & length_mm<5)
 
@@ -72,6 +75,19 @@ FactCockleSize |> dplyr::filter(thickness_mm>10 & length_mm<5)
 Further explore the plot with a regression line through all the data
 
 ```{r}
+ggplot2::ggplot(data=FactCockleSize,
+                mapping=aes(x=thickness_mm,y=length_mm))+
+  geom_point(mapping=aes(color=year))+
+  geom_smooth(method="lm",color="yellow") + 
+  theme_dark()
+
+#calculate a linear regression
+model_lm <- lm(thickness_mm~length_mm, data=FactCockleSize)
+summary(model_lm)
+#equation: thickness_mm=-0.353+0.669*length_mm
+# a cockle of length 20 mm has an predicted width of:
+-0.353+0.669*20
+#this regression is significant, R2=0.90, P<0.001
 ```
 
 Make same plot but showing a separate regression line per year
