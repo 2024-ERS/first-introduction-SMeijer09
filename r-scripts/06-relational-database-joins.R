@@ -4,34 +4,62 @@
 # clear everything in memory
 rm(list=ls())
 
-# load libraries
+# restore and load libraries
+renv::restore()
 library(tidyverse) # including ggplot2, dplyr that we 
 
 # load the elevation data and show the first 10 records of the dataset
-elevdat<-read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vT4C7olgh28MHskOjCIQGYlY8v5z1sxza9XaCccwITnjoafF_1Ntfyl1g7ngQt4slnQlseWT6Fk3naB/pub?gid=1550309563&single=true&output=csv")
+elevdat<-read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vT4C7olgh28MHskOjCIQGYlY8v5z1sxza9XaCccwITnjoafF_1Ntfyl1g7ngQt4slnQlseWT6Fk3naB/pub?gid=1550309563&single=true&output=csv") |>
+  dplyr::mutate(year=factor(year))
 elevdat
 
 # plot the change in transect  elevation along the transect, using a separate graph for each for each year 
-
+elevdat |> 
+  ggplot(aes(x=TransectPoint_ID, y=elevation_m)) +
+  geom_line() +
+  facet_wrap(~year)
 # plot the change in transect  elevation along the transect, using a separate line color for each year 
-
+elevdat |>
+  ggplot(aes(x=TransectPoint_ID, y=elevation_m)) +
+  geom_line(aes(col=year))
 # Extract the data for 2017 in a new tibble, keep only variables distance_m and elevation
 # omit records where Distance_ID is missing (NA)
+elevdat2017 <- elevdat |> 
+  dplyr::filter(year==2017) |>
+  dplyr::select(TransectPoint_ID, elevation_m) |>
+  dplyr::filter(!is.na(TransectPoint_ID))
+
 
 # read the cockle data 
 # keep only the data for 2017, 
 # omit observations (Obs_ID) 468 and 1531
+  
+
 # calculate the mean number of cockles and mean size for each distance
-cdat2017 <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSpormjGiM4uWMTIZYm9Upt5j1Ige_Wu9CrhGGdvjXwxmHP2R6S7JDyEmiGTn3fXihl5s5yBn_sdo8h/pub?gid=1538766002&single=true&output=csv") 
+cdat2017 <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSpormjGiM4uWMTIZYm9Upt5j1Ige_Wu9CrhGGdvjXwxmHP2R6S7JDyEmiGTn3fXihl5s5yBn_sdo8h/pub?gid=1538766002&single=true&output=csv") |>
+  dplyr::filter(year==2017,
+                CockleObs_ID!=468,
+                CockleObs_ID!=1531) |>
+  dplyr::group_by(TransectPoint_ID) |>
+  dplyr::summarise(n_obs=n(),
+                   avg_l=mean(length_mm, na.rm = T),
+                   sd_l=sd(length_mm,na.rm = T),
+                   se_l=sd_l/sqrt(n_obs))
 
 # plot (with a line and points)  how the number of cockles changes with distance along the transect
-
+cdat2017 |> ggplot2::ggplot(aes(x=TransectPoint_ID,y=n_obs)) +
+  geom_point() + geom_line()
 
 ##### merge the cockle and elevation data into a single table you call "combidat"
-# using Distance_ID as the common variable between the two tables
-
+# using TransectPoint_ID as the common variable between the two tables
+#always put the longest file first!
+combidat <- dplyr::left_join(elevdat2017,cdat2017,by="TransectPoint_ID") |>
+  dplyr::mutate(n_obs=tidyr::replace_na(n_obs,0))
 # show in a plot how cockle density changes with elevation
-
+combidat |>
+  ggplot2::ggplot(aes(x=elevation_m, y=n_obs)) +
+  geom_point() + 
+  geom_smooth(method="loess")
 # fit a linear regression
 
 # predicted at 0.5 m (x)
