@@ -147,25 +147,35 @@ orchdat3$pred5 <- predict(m5,type="response")
 p1 + geom_line(data=orchdat3, aes(y=pred5),linewidth=1.2)
 
 #account for the ecological optimum
+
+# now test and show  the effect of both elevation , elevation squared and year
 m6 <- glm(CountSum~elevation_m+I(elevation_m^2),
           family=poisson(log),
           data=orchdat3)
 orchdat3$pred6 <- predict(m6,type="response")
 p1 + geom_line(data=orchdat3, aes(y=pred6),linewidth=1.2)
-# now test and show  the effect of both elevation , elevation squared and year
-
 
 #add the linear model to the plot
 # calculate the predicted value of m2 for every observation, add to the dataset as a variable as pred2
 # add the new predicted line to the previous plot p2, store as object p3 and show it
-
+m7 <- glm(CountSum~elevation_m+I(elevation_m^2)+factor(year),
+          family=poisson(log),
+          data=orchdat3)
+orchdat3$pred7 <- predict(m7,type="response")
+p1 + geom_line(data=orchdat3, aes(y=pred7,color=factor(year)),linewidth=1.2)
+anova(m7,test="Chisq")
 
 # better than the previous?
 
 
 # add the interaction to the model: elevation + elevation ^2 + year + elevation*year
 # now test and show  the effect of both elevation + year
-
+m8 <- glm(CountSum~elevation_m+I(elevation_m^2)+factor(year)+elevation_m*factor(year),
+          family=poisson(log),
+          data=orchdat3)
+orchdat3$pred8 <- predict(m8,type="response")
+p1 + geom_line(data=orchdat3, aes(y=pred8,color=factor(year)),linewidth=1.2)
+anova(m8,m7,test="Chisq")
 
 #add the  model to the plot
 # calculate the predicted value of m2 for every observation, add to the dataset as a variable as pred2
