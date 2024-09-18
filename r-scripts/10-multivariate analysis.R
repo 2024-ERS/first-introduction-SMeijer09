@@ -100,14 +100,22 @@ biplot(pca,xlab="PC1 49%",ylab="PC2 21%")
 
 ##### ordination: calculate and plot a Non-metric Multidimensional Scaling (NMDS) ordination
 # explore the distance (dissimilarity) in species composition between plots
+d1 <- vegan::vegdist(vegdat,method="euclidean") # Euclidean dissimilarity
+d1 
+d2 <- vegan::vegdist(vegdat,method="bray") # Bray-Curtis dissimilarity
+d2
 
 ##### improve the NMDS ordination plot by only showing the dominant species
 # non-metric multidimension scaling / indirect gradient analysis (only species composition)
-
-
+nmds_veg <- metaMDS(vegdat,k=2,trace=F,trymax=1000,distance="bray")
+nmds_veg
+vegan::ordiplot(nmds_veg,type="t")
 # and show the ordination with the most abundance species with priority
-
-
+SpecTotCover <- colSums(vegdat)
+SpecTotCover
+vegan::ordiplot(nmds_veg,display="sites",cex=1,type="t")
+vegan::orditorp(nmds_veg,display="sp",priority=SpecTotCover,
+                col="red",pcol="red",pch="+",cex=1.1)
 #### ordination: compare to a DCA -> decide what ordination we should do, linear or unimodal? 
 # how long are the gradients? Should I use linear (PCA)or unimodal method (NMDS, DCA)
 
