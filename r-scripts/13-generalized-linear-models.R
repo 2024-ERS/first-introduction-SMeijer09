@@ -56,21 +56,37 @@ head(data)
 
 
 # show in a scatter plot
+data |>
+  ggplot(aes(x = Treatment, y = Value, color = Block)) +
+  geom_jitter(width=0.15) +
+  geom_smooth(method = "lm", se = FALSE) 
 
 
+
+#not correct: treats block as if it is a fixed effect but its random
+m1 <- lm(Value~Treatment+Block+Treatment:Block, data=data)
+anova(m1)
 
 # find the best model describing the effects of treatment and block
-# block is a random effect, treatment is a fixed effect
-
-
+# block is a random effect, treatment is a fixed effect --- mixed model
+model1 <- lmerTest::lmer(Value~Treatment + (1|Block), data=data)
+summary(model1)
+coef(model1) #slope of treatment is the same for all blocks
+ggplot(data, aes(x=Treatment,y=Value, color=Block)) +
+  geom_jitter(width=0.15) + 
+  geom_line(aes(y=predict(model1)), size=1)
 
 #using lme4, show a mixed model with fixed slopes (=effect of the treatment within each block) and random intercepts
-
-
 #using lme4, show a mixed model with random slopes and random intercepts
-
-
 # note that the effect of treatment is now also shown as a random effect 
-
 # plot this model with the data as points using ggplot and predicted values
+model2 <- lmerTest::lmer(Value~Treatment + (Treatment|Block), data=data)
+summary(model2)
+coef(model2) #slope of treatment is not the same for all blocks
+ggplot(data, aes(x=Treatment,y=Value, color=Block)) +
+  geom_jitter(width=0.15) + 
+  geom_line(aes(y=predict(model2)), size=1)
 
+#Compare the models using Akaike's Information Criterion (AIC)
+#if at least value 2 lower, then often significantly different
+anova(model1, model2)
